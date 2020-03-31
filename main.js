@@ -1,18 +1,17 @@
-let Az = require('az');
-let fs = require('fs');
+const Az = require('az');
+const fs = require('fs');
+const readline = require('readline');
 
-class MorphFile{
+class MorphFile {
 
     // Инициализация
     init(file) {
-
         let str = this.readContent(file);
         str = str.replace(/[.–?!,«»–:;{}\[\]\|`()…—*&#'@№<>"|-]/g, '');
         str = str.replace(/[A-Za-z]/g, '')
         str = str.replace(/[0-9]/g, '');
         str = str.replace(/(\r\n|\n|\r|\t)/gm, " ").split(' ');
         str = str.filter(element => element !== '');
-        console.log(str)
         this.check(str);
     }
 
@@ -29,8 +28,8 @@ class MorphFile{
                 try {
                     word = Az.Morph(arr[i]);
                     partsOfSpeech[word[0].tag.POS.toString()] += 1;
-                }catch (e) {
-                    
+                } catch (e) {
+
                 }
             }
             console.group();
@@ -49,4 +48,19 @@ class MorphFile{
 }
 
 let morph = new MorphFile();
-morph.init('./avidreaders.ru__voyna-i-mir-tom-1.txt');
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.question('Введите путь к файлу: ', (answer) => {
+    // Пример файла ./avidreaders.ru__voyna-i-mir-tom-1.txt
+    try {
+        morph.init(`${answer}`);
+    } catch {
+        console.log('Неверный путь!')
+    }
+    rl.close();
+});
+
